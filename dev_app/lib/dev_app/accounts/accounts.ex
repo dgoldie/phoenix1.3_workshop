@@ -21,6 +21,15 @@ defmodule DevApp.Accounts do
     Repo.all(User)
   end
 
+
+  def count_users do
+    Repo.aggregate(User, :count, :id)
+  end
+
+  def delete_all_users do
+    Repo.delete_all(User)
+  end
+
   @doc """
   Gets a single user.
 
