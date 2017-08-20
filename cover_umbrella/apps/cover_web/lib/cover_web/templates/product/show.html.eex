@@ -1,0 +1,28 @@
+<h2>Show Product</h2>
+<h4>For Category: <em><%= @category.name %></em></h4>
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @product.name %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @product.description %>
+  </li>
+
+  <li>
+    <strong>Price:</strong>
+    <%= @product.price %>
+  </li>
+
+  <li>
+    <strong>Sku:</strong>
+    <%= @product.sku %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: category_product_path(@conn, :edit, @category, @product) %></span>
+<span><%= link "Back", to: category_product_path(@conn, :index, @category) %></span>

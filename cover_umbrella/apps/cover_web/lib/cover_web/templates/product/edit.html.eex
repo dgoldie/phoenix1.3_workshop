@@ -1,0 +1,8 @@
+<h2>Edit Product</h2>
+
+<%= render "form.html", Map.merge(assigns, %{action: category_product_path(@conn, :update, @category, @product),
+                                             category: @category}) %>
+<%#= render "form.html", changeset: @changeset,
+                        action: category_product_path(@conn, :create, @category) %>
+
+<span><%= link "Back", to: category_product_path(@conn, :index, @category) %></span>
