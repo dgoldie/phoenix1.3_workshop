@@ -64,16 +64,22 @@ defmodule Cover.StoreTest do
   end
 
   describe "products" do
-    alias Cover.Store.Product
+    alias Cover.Store.{Product, Category}
 
     @valid_attrs %{description: "some description", name: "some name", price: 42, sku: "some sku"}
     @update_attrs %{description: "some updated description", name: "some updated name", price: 43, sku: "some updated sku"}
     @invalid_attrs %{description: nil, name: nil, price: nil, sku: nil}
 
+    def category do
+      {:ok, category} = Store.create_category(%{name: "cat"})
+      category
+    end
+
     def product_fixture(attrs \\ %{}) do
+      attrs = Map.merge @valid_attrs, %{category_id: category().id}
       {:ok, product} =
         attrs
-        |> Enum.into(@valid_attrs)
+        |> Enum.into(attrs)
         |> Store.create_product()
 
       product
@@ -81,16 +87,22 @@ defmodule Cover.StoreTest do
 
     test "list_products/0 returns all products" do
       product = product_fixture()
-      assert Store.list_products() == [product]
+      category = Store.get_category!(product.category_id)
+
+      assert Store.list_products(category) == [product]
     end
 
     test "get_product!/1 returns the product with given id" do
       product = product_fixture()
-      assert Store.get_product!(product.id) == product
+      category = Store.get_category!(product.category_id)
+
+      assert Store.get_product!(category, product.id) == product
     end
 
     test "create_product/1 with valid data creates a product" do
-      assert {:ok, %Product{} = product} = Store.create_product(@valid_attrs)
+      attrs = Map.merge @valid_attrs, %{category_id: category().id}
+
+      assert {:ok, %Product{} = product} = Store.create_product(attrs)
       assert product.description == "some description"
       assert product.name == "some name"
       assert product.price == 42
@@ -103,7 +115,11 @@ defmodule Cover.StoreTest do
 
     test "update_product/2 with valid data updates the product" do
       product = product_fixture()
-      assert {:ok, product} = Store.update_product(product, @update_attrs)
+      category = Store.get_category!(product.category_id)
+      attrs = Map.merge @update_attrs, %{category_id: category.id}
+
+
+      assert {:ok, product} = Store.update_product(product, attrs)
       assert %Product{} = product
       assert product.description == "some updated description"
       assert product.name == "some updated name"
@@ -113,14 +129,18 @@ defmodule Cover.StoreTest do
 
     test "update_product/2 with invalid data returns error changeset" do
       product = product_fixture()
+      category = Store.get_category!(product.category_id)
+
       assert {:error, %Ecto.Changeset{}} = Store.update_product(product, @invalid_attrs)
-      assert product == Store.get_product!(product.id)
+      assert product == Store.get_product!(category, product.id)
     end
 
     test "delete_product/1 deletes the product" do
       product = product_fixture()
+      category = Store.get_category!(product.category_id)
+
       assert {:ok, %Product{}} = Store.delete_product(product)
-      assert_raise Ecto.NoResultsError, fn -> Store.get_product!(product.id) end
+      assert_raise Ecto.NoResultsError, fn -> Store.get_product!(category, product.id) end
     end
 
     test "change_product/1 returns a product changeset" do

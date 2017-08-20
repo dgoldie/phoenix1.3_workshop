@@ -41,7 +41,6 @@ defmodule CoverWeb.ProductControllerTest do
     setup [:create_category]
 
     test "redirects to show when data is valid", %{conn: conn, category: category} do
-
       attrs = Map.merge(@create_attrs, %{category_id: category.id})
       conn = post conn, category_product_path(conn, :create, category), product: attrs
 
@@ -64,6 +63,7 @@ defmodule CoverWeb.ProductControllerTest do
 
     test "renders form for editing chosen product", %{conn: conn, product: product} do
       category = Store.get_category!(product.category_id)
+
       conn = get conn, category_product_path(conn, :edit, category, product)
       assert html_response(conn, 200) =~ "Edit Product"
     end
