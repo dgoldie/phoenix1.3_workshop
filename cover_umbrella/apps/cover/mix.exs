@@ -23,7 +23,7 @@ defmodule Cover.Mixfile do
   def application do
     [
       mod: {Cover.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :crudex]
     ]
   end
 
@@ -37,6 +37,8 @@ defmodule Cover.Mixfile do
   defp deps do
     [
       {:postgrex, ">= 0.0.0"},
+      {:crudex, git: "git@github.com:dgoldie/crudex.git"},
+      # {:crudex, path: "/Users/doug/code/work/libraries/crudex"},
       {:ecto, "~> 2.1"}
     ]
   end

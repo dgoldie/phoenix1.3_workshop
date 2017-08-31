@@ -4,11 +4,12 @@ defmodule Cover.Store do
   """
 
   # import Ecto.Query, warn: false
+  import Crudex
   alias Cover.Repo
   alias Cover.Store.Category
   alias Cover.Store.Product
 
-  use Cover.ContextResource, repo: Cover.Repo
+  use Crudex, repo: Cover.Repo
 
   resources Category
   # resources Product
