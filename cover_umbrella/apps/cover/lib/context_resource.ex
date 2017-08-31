@@ -1,23 +1,28 @@
 defmodule Cover.ContextResource do
   alias Cover.Repo
 
-  defmacro __using__(_options) do
+  defmacro __using__(options) do
     quote do
+      IO.puts "In using's context (#{__MODULE__})."
+      IO.puts "repo is #{ unquote(options)[:repo]}"
+      @repo unquote(options)[:repo]
+
       import unquote(__MODULE__)
       import Ecto.Query, warn: false
     end
   end
 
   defmacro resources(table) do
-    # IO.puts "In macro's context (#{__MODULE__})."
+    IO.puts "In macro's context (#{__MODULE__})."
     # IO.puts "table is #{ Macro.to_string table}"
 
     quote bind_quoted: [table: table] do
-      # IO.puts "In caller's context (#{__MODULE__})."
+      IO.puts "In caller's context (#{__MODULE__})."
       # IO.puts "table is #{inspect table}"
       # IO.inspect apply(table, :__schema__, [:source])
       # IO.inspect Module.split table
 
+      IO.inspect "repo here is #{@repo}"
 
       source = apply(table, :__schema__, [:source])
       # IO.puts "source is #{source}"
@@ -30,19 +35,19 @@ defmodule Cover.ContextResource do
       # list
       list_name = String.to_atom("list_#{source}")
       def unquote(list_name)() do
-        Repo.all(unquote(table))
+        @repo.all(unquote(table))
       end
 
       # get
       get_name = String.to_atom("get_#{single_source}")
       def unquote(get_name)(id) do
-        Repo.get(unquote(table), id)
+        @repo.get(unquote(table), id)
       end
 
       # get!
       get_name! = String.to_atom("get_#{single_source}!")
       def unquote(get_name!)(id) do
-       Repo.get!(unquote(table), id)
+       @repo.get!(unquote(table), id)
       end
 
       #create
@@ -50,7 +55,7 @@ defmodule Cover.ContextResource do
       def unquote(create_name)(attrs \\ %{}) do
         unquote(table).__struct__
         |> unquote(table).changeset(attrs)
-        |> Repo.insert()
+        |> @repo.insert()
       end
 
       #update
@@ -59,14 +64,14 @@ defmodule Cover.ContextResource do
       def unquote(update_name)(table_struct = record, attrs) do
         record
         |> unquote(table).changeset(attrs)
-        |> Repo.update()
+        |> @repo.update()
       end
 
       # delete
       delete_name = String.to_atom("delete_#{single_source}")
       table_struct = table.__struct__
       def unquote(delete_name)(table_struct = record) do
-        Repo.delete(record)
+        @repo.delete(record)
       end
 
       # change

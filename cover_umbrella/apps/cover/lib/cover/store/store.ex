@@ -8,7 +8,7 @@ defmodule Cover.Store do
   alias Cover.Store.Category
   alias Cover.Store.Product
 
-  use Cover.ContextResource
+  use Cover.ContextResource, repo: Cover.Repo
 
   resources Category
   # resources Product
